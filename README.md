@@ -88,6 +88,19 @@ Siamo felici di ricevere contributi dalla community italiana di Laravel! Che si 
     ```
 8.  Apri una **Pull Request** verso il branch `main` di questo repository descrivendo le modifiche apportate.
 
+## 🤝🏻 Convenzioni
+
+### Lingua
+
+🇬🇧 Utilizza la lingua **inglese** per
+- codice (classi, metodi, variabili, ecc.)
+- commenti nel codice
+- messaggi di commit
+- nomi branch (es. `feature/unban-command`)
+
+🇮🇹 Utilizza la lingua **italiana** per
+- messaggi/errori destinati all'utente su Telegram
+
 ## 🐛 Segnalazione Bug
 Se trovi un bug ma non hai modo di risolverlo personalmente, apri una **Issue** descrivendo il problema, i passaggi per riprodurlo e, se possibile, includendo log o screenshot.
 
