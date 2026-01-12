@@ -6,6 +6,7 @@ use App\Telegram\Enums\CommandEnum;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Properties\ChatType;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
+use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
 describe('when sending /chatid', function () {
@@ -13,11 +14,33 @@ describe('when sending /chatid', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $chatId = 123;
-        $bot->setCommonChat(Chat::make(id: $chatId, type: ChatType::PRIVATE));
+        $user = User::make(
+            id: 1,
+            is_bot: false,
+            first_name: 'Test',
+            username: 'test',
+        );
 
-        $bot->hearText(CommandEnum::ChatId->command())
+        $chatId = 123;
+        $bot->setCommonUser($user)
+            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::PRIVATE))
+            ->hearText(CommandEnum::ChatId->command())
+            ->willReceive(result: [
+                [
+                    'status' => 'administrator',
+                    'user' => $user->toArray(),
+                    'can_be_edited' => true,
+                    'is_anonymous' => false,
+                    'can_manage_chat' => true,
+                    'can_delete_messages' => true,
+                    'can_manage_video_chats' => true,
+                    'can_restrict_members' => true,
+                    'can_promote_members' => true,
+                    'can_change_info' => true,
+                    'can_invite_users' => true,
+                ],
+            ])
             ->reply()
-            ->assertReplyText("L'ID della chat è $chatId");
+            ->assertReplyText("L'ID della chat è $chatId", 1);
     });
 });
