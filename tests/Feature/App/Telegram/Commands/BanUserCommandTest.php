@@ -10,7 +10,7 @@ use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
 describe('when sending /ban without replying to a message', function () {
-    it('does not send any response', function () {
+    it('does not send any reply', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
@@ -22,9 +22,8 @@ describe('when sending /ban without replying to a message', function () {
         );
 
         $chatId = 123;
-
         $bot->setCommonUser($user)
-            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::PRIVATE))
+            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
             ->hearText(CommandEnum::Ban->command())
             ->willReceive(result: [
                 [
@@ -41,11 +40,11 @@ describe('when sending /ban without replying to a message', function () {
                     'can_invite_users' => true,
                 ],
             ])
-            ->reply();
-    })->todo();
+            ->assertNoReply();
+    });
 });
 
-describe('when sending /ban', function () {
+describe('when sending /ban replying to a user message', function () {
     it('bans the user', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
@@ -58,47 +57,7 @@ describe('when sending /ban', function () {
         );
 
         $chatId = 123;
-
         $bot->setCommonUser($user)
-            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
-            ->hearText('/ban')
-            ->willReceive(result: [
-                [
-                    'status' => 'administrator',
-                    'user' => $user->toArray(),
-                    'can_be_edited' => true,
-                    'is_anonymous' => false,
-                    'can_manage_chat' => true,
-                    'can_delete_messages' => true,
-                    'can_manage_video_chats' => true,
-                    'can_restrict_members' => true,
-                    'can_promote_members' => true,
-                    'can_change_info' => true,
-                    'can_invite_users' => true,
-                ],
-            ])
-            ->reply()
-            ->dump();
-        /*
-        ->reply()
-        ->hearText(CommandEnum::Ban->command())
-        ->willReceive(result: [
-            [
-                'status' => 'administrator',
-                'user' => $user->toArray(),
-                'can_be_edited' => true,
-                'is_anonymous' => false,
-                'can_manage_chat' => true,
-                'can_delete_messages' => true,
-                'can_manage_video_chats' => true,
-                'can_restrict_members' => true,
-                'can_promote_members' => true,
-                'can_change_info' => true,
-                'can_invite_users' => true,
-            ]
-        ])
-        ->dump()
-        ->assertReplyText("L'ID della chat è $chatId", 1);
-        */
+            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP));
     })->todo();
 });

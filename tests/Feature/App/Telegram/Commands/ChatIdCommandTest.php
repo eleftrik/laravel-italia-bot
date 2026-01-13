@@ -23,7 +23,7 @@ describe('when sending /chatid', function () {
 
         $chatId = 123;
         $bot->setCommonUser($user)
-            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::PRIVATE))
+            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
             ->hearText(CommandEnum::ChatId->command())
             ->willReceive(result: [
                 [
