@@ -49,15 +49,33 @@ describe('when sending /ban replying to a user message', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $user = User::make(
-            id: 1,
-            is_bot: false,
-            first_name: 'Test',
-            username: 'test',
-        );
+        //        $user = User::make(
+        //            id: 1,
+        //            is_bot: false,
+        //            first_name: 'Test',
+        //            username: 'test',
+        //        );
 
-        $chatId = 123;
-        $bot->setCommonUser($user)
-            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP));
+        $usernameToBan = 'spammer';
+        $userToBan = User::make(
+            id: 2,
+            is_bot: false,
+            first_name: 'Spammer',
+            username: $usernameToBan,
+        );
+        $chat = Chat::make(id: 1, type: ChatType::GROUP);
+
+        $bot->setCommonChat($chat)
+            ->hearMessage([
+                'text' => '/ban',
+                'reply_to_message' => [
+                    'from' => $userToBan->toArray(),
+                    'chat' => $chat->toArray(),
+                    'text' => 'Spam message',
+                ],
+            ])
+            ->reply()
+            ->assertCalled('banChatMember')
+            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 1);
     })->todo();
 });

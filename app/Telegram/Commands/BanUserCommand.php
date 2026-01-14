@@ -23,7 +23,6 @@ final class BanUserCommand extends Command
 
         $reply = $bot->message()?->reply_to_message;
 
-        //        dd('reply', $reply);
         if ($reply === null) {
             return;
         }
