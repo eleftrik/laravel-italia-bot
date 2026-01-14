@@ -74,25 +74,27 @@ describe('when sending /ban replying to a user message', function () {
                     'text' => 'Spam message',
                 ],
             ])
-            ->willReceive(result: $botUser->toArray()
+            ->willReceive(
+                result: $botUser->toArray()
             ) // mock getMe
-            ->willReceive(result: [
-                [
-                    'status' => 'administrator',
-                    'user' => $botUser->toArray(),
-                    'can_be_edited' => true,
-                    'is_anonymous' => false,
-                    'can_manage_chat' => true,
-                    'can_delete_messages' => true,
-                    'can_manage_video_chats' => true,
-                    'can_restrict_members' => true,
-                    'can_promote_members' => true,
-                    'can_change_info' => true,
-                    'can_invite_users' => true,
-                ],
-            ]) // mock getChatAdministrators
+            ->willReceive(
+                result: [
+                    [
+                        'status' => 'administrator',
+                        'user' => $botUser->toArray(),
+                        'can_be_edited' => true,
+                        'is_anonymous' => false,
+                        'can_manage_chat' => true,
+                        'can_delete_messages' => true,
+                        'can_manage_video_chats' => true,
+                        'can_restrict_members' => true,
+                        'can_promote_members' => true,
+                        'can_change_info' => true,
+                        'can_invite_users' => true,
+                    ],
+                ]) // mock getChatAdministrators
             ->reply()
             ->assertCalled('banChatMember')
-            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 1);
-    })->todo();
+            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 4);
+    });
 });

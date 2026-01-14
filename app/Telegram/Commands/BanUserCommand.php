@@ -7,7 +7,6 @@ namespace App\Telegram\Commands;
 use App\Telegram\Enums\CommandEnum;
 use SergiX44\Nutgram\Handlers\Type\Command;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Properties\ChatMemberStatus;
 use SergiX44\Nutgram\Telegram\Types\Chat\ChatMember;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 
@@ -46,16 +45,7 @@ final class BanUserCommand extends Command
             return;
         }
 
-        /** @var ChatMemberStatus $targetMemberStatus */
-        $targetMemberStatus = $targetMember->status;
-
-        if (in_array($targetMemberStatus->value, ['administrator', 'creator'], true)) {
-            $bot->sendMessage(__('telegram.errors.cannot_ban_an_admin'));
-
-            return;
-        }
-
-        // Ban user and remove all they messages
+        // Ban user and remove all their messages
         $bot->banChatMember(
             chat_id: $chatId,
             user_id: $targetUser->id,

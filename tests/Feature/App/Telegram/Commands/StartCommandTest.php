@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Telegram\Enums\CommandEnum;
 use SergiX44\Nutgram\Nutgram;
+use SergiX44\Nutgram\Telegram\Properties\ChatType;
+use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
@@ -12,6 +14,15 @@ describe('when sending /start', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
+        $botUser = User::make(
+            id: 99999,
+            is_bot: true,
+            first_name: 'Bot',
+            username: 'botman',
+        );
+
+        $chat = Chat::make(id: 1, type: ChatType::GROUP);
+
         $user = User::make(
             id: 1,
             is_bot: false,
@@ -19,12 +30,16 @@ describe('when sending /start', function () {
             username: 'test',
         );
 
-        $bot->setCommonUser($user)
+        $bot->setCommonChat($chat)
+            ->setCommonUser($user)
             ->hearText(CommandEnum::Start->command())
+            ->willReceive(
+                result: $botUser->toArray()
+            ) // mock getMe
             ->willReceive(result: [
                 [
                     'status' => 'administrator',
-                    'user' => $user->toArray(),
+                    'user' => $botUser->toArray(),
                     'can_be_edited' => true,
                     'is_anonymous' => false,
                     'can_manage_chat' => true,
@@ -37,6 +52,6 @@ describe('when sending /start', function () {
                 ],
             ])
             ->reply()
-            ->assertReplyText('Hello, world!', 1);
+            ->assertReplyText('Hello, world!', 2);
     });
 });

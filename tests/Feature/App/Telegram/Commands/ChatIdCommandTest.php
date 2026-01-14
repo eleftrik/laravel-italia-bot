@@ -14,6 +14,13 @@ describe('when sending /chatid', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
+        $botUser = User::make(
+            id: 99999,
+            is_bot: true,
+            first_name: 'Bot',
+            username: 'botman',
+        );
+
         $user = User::make(
             id: 1,
             is_bot: false,
@@ -25,10 +32,13 @@ describe('when sending /chatid', function () {
         $bot->setCommonUser($user)
             ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
             ->hearText(CommandEnum::ChatId->command())
+            ->willReceive(
+                result: $botUser->toArray()
+            ) // mock getMe
             ->willReceive(result: [
                 [
                     'status' => 'administrator',
-                    'user' => $user->toArray(),
+                    'user' => $botUser->toArray(),
                     'can_be_edited' => true,
                     'is_anonymous' => false,
                     'can_manage_chat' => true,
@@ -41,6 +51,6 @@ describe('when sending /chatid', function () {
                 ],
             ])
             ->reply()
-            ->assertReplyText("L'ID della chat è $chatId", 1);
+            ->assertReplyText("L'ID della chat è $chatId", 2);
     });
 });
