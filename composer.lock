@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "912d7bb489ce708eb1d6e0d7f0fa66b5",
+    "content-hash": "5bf2aa11a9f32c293d2ecaa4d10f5a4d",
     "packages": [
         {
             "name": "brick/math",
@@ -2671,16 +2671,16 @@
         },
         {
             "name": "nutgram/nutgram",
-            "version": "4.39.2",
+            "version": "4.40.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nutgram/nutgram.git",
-                "reference": "78fad0d9dd31974028d773525f48932436d110f8"
+                "reference": "dd820afcdf41cd07e3a80506e545e5eaecd04aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nutgram/nutgram/zipball/78fad0d9dd31974028d773525f48932436d110f8",
-                "reference": "78fad0d9dd31974028d773525f48932436d110f8",
+                "url": "https://api.github.com/repos/nutgram/nutgram/zipball/dd820afcdf41cd07e3a80506e545e5eaecd04aea",
+                "reference": "dd820afcdf41cd07e3a80506e545e5eaecd04aea",
                 "shasum": ""
             },
             "require": {
@@ -2742,7 +2742,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nutgram/nutgram/issues",
-                "source": "https://github.com/nutgram/nutgram/tree/4.39.2"
+                "source": "https://github.com/nutgram/nutgram/tree/4.40.1"
             },
             "funding": [
                 {
@@ -2754,7 +2754,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-11-23T20:47:45+00:00"
+            "time": "2026-01-14T16:56:14+00:00"
         },
         {
             "name": "phpoption/phpoption",
