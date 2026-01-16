@@ -5,6 +5,7 @@
 use App\Telegram\Commands\BanUserCommand;
 use App\Telegram\Commands\ChatIdCommand;
 use App\Telegram\Enums\CommandEnum;
+use App\Telegram\Handlers\WelcomeMessageHandler;
 use App\Telegram\Middleware\IsAdminMiddleware;
 use SergiX44\Nutgram\Nutgram;
 
@@ -20,6 +21,8 @@ use SergiX44\Nutgram\Nutgram;
 
 $bot->group(function (Nutgram $bot) {
     $bot->registerCommand(BanUserCommand::class);
+
+    $bot->onNewChatMembers(WelcomeMessageHandler::class);
 
     when(! app()->isProduction(), $bot->registerCommand(ChatIdCommand::class));
 

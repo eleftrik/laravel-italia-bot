@@ -9,5 +9,10 @@ return [
     'messages' => [
         'chat_id' => "L'ID della chat è :chat_id",
         'user_has_been_banned' => "🔨L'utente @:username ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽",
+        'welcome' => 'Ciao :user, benvenuto/a nel gruppo *:group*',
+    ],
+    'buttons' => [
+        'documentation' => '📕 Documentazione',
+        'free_courses' => '💻 Corsi gratuiti',
     ],
 ];
