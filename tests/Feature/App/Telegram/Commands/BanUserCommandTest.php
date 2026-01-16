@@ -1,0 +1,100 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Telegram\Enums\CommandEnum;
+use SergiX44\Nutgram\Nutgram;
+use SergiX44\Nutgram\Telegram\Properties\ChatType;
+use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
+use SergiX44\Nutgram\Telegram\Types\User\User;
+use SergiX44\Nutgram\Testing\FakeNutgram;
+
+describe('when sending /ban without replying to a message', function () {
+    it('does not send any reply', function () {
+        /** @var FakeNutgram $bot */
+        $bot = resolve(Nutgram::class);
+
+        $user = User::make(
+            id: 1,
+            is_bot: false,
+            first_name: 'Test',
+            username: 'test',
+        );
+
+        $chatId = 123;
+        $bot->setCommonUser($user)
+            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
+            ->hearText(CommandEnum::Ban->command())
+            ->willReceive(result: [
+                [
+                    'status' => 'administrator',
+                    'user' => $user->toArray(),
+                    'can_be_edited' => true,
+                    'is_anonymous' => false,
+                    'can_manage_chat' => true,
+                    'can_delete_messages' => true,
+                    'can_manage_video_chats' => true,
+                    'can_restrict_members' => true,
+                    'can_promote_members' => true,
+                    'can_change_info' => true,
+                    'can_invite_users' => true,
+                ],
+            ])
+            ->assertNoReply();
+    });
+});
+
+describe('when sending /ban replying to a user message', function () {
+    it('bans the user', function () {
+        /** @var FakeNutgram $bot */
+        $bot = resolve(Nutgram::class);
+
+        $botUser = User::make(
+            id: 99999,
+            is_bot: true,
+            first_name: 'Bot',
+            username: 'botman',
+        );
+
+        $usernameToBan = 'spammer';
+        $userToBan = User::make(
+            id: 2,
+            is_bot: false,
+            first_name: 'Spammer',
+            username: $usernameToBan,
+        );
+        $chat = Chat::make(id: 1, type: ChatType::GROUP);
+
+        $bot->setCommonChat($chat)
+            ->hearMessage([
+                'text' => CommandEnum::Ban->command(),
+                'reply_to_message' => [
+                    'from' => $userToBan->toArray(),
+                    'chat' => $chat->toArray(),
+                    'text' => 'Spam message',
+                ],
+            ])
+            ->willReceive(
+                result: $botUser->toArray()
+            ) // mock getMe
+            ->willReceive(
+                result: [
+                    [
+                        'status' => 'administrator',
+                        'user' => $botUser->toArray(),
+                        'can_be_edited' => true,
+                        'is_anonymous' => false,
+                        'can_manage_chat' => true,
+                        'can_delete_messages' => true,
+                        'can_manage_video_chats' => true,
+                        'can_restrict_members' => true,
+                        'can_promote_members' => true,
+                        'can_change_info' => true,
+                        'can_invite_users' => true,
+                    ],
+                ]) // mock getChatAdministrators
+            ->reply()
+            ->assertCalled('banChatMember')
+            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 4);
+    });
+});

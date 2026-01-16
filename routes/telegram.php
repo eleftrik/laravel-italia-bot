@@ -3,6 +3,9 @@
 /** @var SergiX44\Nutgram\Nutgram $bot */
 
 use App\Telegram\Commands\BanUserCommand;
+use App\Telegram\Commands\ChatIdCommand;
+use App\Telegram\Enums\CommandEnum;
+use App\Telegram\Middleware\IsAdminMiddleware;
 use SergiX44\Nutgram\Nutgram;
 
 /*
@@ -15,9 +18,12 @@ use SergiX44\Nutgram\Nutgram;
 |
 */
 
-$bot->onCommand('start', function (Nutgram $bot) {
-    logger((string) $bot->userId());
-    $bot->sendMessage('Hello, world!');
-})->description('The start command!');
+$bot->group(function (Nutgram $bot) {
+    $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot) {
+        $bot->sendMessage('Hello, world!');
+    })->description('The start command!');
 
-$bot->registerCommand(BanUserCommand::class);
+    $bot->registerCommand(BanUserCommand::class);
+
+    $bot->registerCommand(ChatIdCommand::class);
+})->middleware(IsAdminMiddleware::class);

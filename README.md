@@ -58,7 +58,7 @@ Se vuoi contribuire o testare il bot in locale, segui questi passaggi.
     Per lo sviluppo locale, Nutgram offre una comoda modalità polling che non richiede HTTPS o tunnel (come Ngrok):
 
     ```bash
-    php artisan nutgram:run
+    php artisan nutgram:listen
     ```
 
 ## 🤝 Come Contribuire
@@ -87,6 +87,19 @@ Siamo felici di ricevere contributi dalla community italiana di Laravel! Che si 
     git push origin feature/nome-della-tua-feature
     ```
 8.  Apri una **Pull Request** verso il branch `main` di questo repository descrivendo le modifiche apportate.
+
+## 🤝🏻 Convenzioni
+
+### Lingua
+
+🇬🇧 Utilizza la lingua **inglese** per
+- codice (classi, metodi, variabili, ecc.)
+- commenti nel codice
+- messaggi di commit
+- nomi branch (es. `feature/unban-command`)
+
+🇮🇹 Utilizza la lingua **italiana** per
+- messaggi/errori destinati all'utente su Telegram
 
 ## 🐛 Segnalazione Bug
 Se trovi un bug ma non hai modo di risolverlo personalmente, apri una **Issue** descrivendo il problema, i passaggi per riprodurlo e, se possibile, includendo log o screenshot.
