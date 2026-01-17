@@ -59,6 +59,7 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test",
+            "@refactor-dry",
             "./vendor/bin/phpstan analyse",
             "./vendor/bin/pint"
         ],
