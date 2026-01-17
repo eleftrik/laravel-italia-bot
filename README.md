@@ -22,8 +22,8 @@ Il bot è costruito utilizzando tecnologie moderne e robuste:
 
 ## ✨ Funzionalità (Attuali e Pianificate)
 
-- [ ] Benvenuto automatico per i nuovi utenti.
-- [ ] Moderazione anti-spam di base (admin possono bannare utenti).
+- [x] Benvenuto automatico per i nuovi utenti.
+- [x] Moderazione anti-spam di base (admin possono bannare utenti).
 - [ ] Comando `/corsi` per link utili ai corsi Laravel.
 
 ## 🚀 Installazione e Sviluppo Locale

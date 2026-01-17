@@ -14,9 +14,13 @@ final readonly class IsAdminMiddleware
 {
     public function __invoke(Nutgram $bot, Link $next): void
     {
-        $botId = $bot->getMe()?->id;
-
         if ($bot->chatId() === null) {
+            return;
+        }
+
+        $messageSender = $bot->message()?->from?->id;
+
+        if ($messageSender === null) {
             return;
         }
 
@@ -28,7 +32,7 @@ final readonly class IsAdminMiddleware
 
         $userIsAdmin = collect($administrators)
             ->pluck('user.id')
-            ->contains($botId);
+            ->contains($messageSender);
 
         if (! $userIsAdmin) {
             return;

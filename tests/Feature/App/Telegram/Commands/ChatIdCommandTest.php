@@ -6,7 +6,6 @@ use App\Telegram\Enums\CommandEnum;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Properties\ChatType;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
-use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
 describe('when sending /chatid', function () {
@@ -14,27 +13,12 @@ describe('when sending /chatid', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $botUser = User::make(
-            id: 99999,
-            is_bot: true,
-            first_name: 'Bot',
-            username: 'botman',
-        );
-
-        $user = User::make(
-            id: 1,
-            is_bot: false,
-            first_name: 'Test',
-            username: 'test',
-        );
+        $botUser = makeBotUser();
 
         $chatId = 123;
-        $bot->setCommonUser($user)
+        $bot->setCommonUser($botUser)
             ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
             ->hearText(CommandEnum::ChatId->command())
-            ->willReceive(
-                result: $botUser->toArray()
-            ) // mock getMe
             ->willReceive(result: [
                 [
                     'status' => 'administrator',
@@ -49,8 +33,8 @@ describe('when sending /chatid', function () {
                     'can_change_info' => true,
                     'can_invite_users' => true,
                 ],
-            ])
+            ]) // mock getChatAdministrators (middleware)
             ->reply()
-            ->assertReplyText("L'ID della chat è $chatId", 2);
+            ->assertReplyText("L'ID della chat è $chatId", index: 1);
     });
 });

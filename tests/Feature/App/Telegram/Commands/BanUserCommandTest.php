@@ -45,16 +45,11 @@ describe('when sending /ban without replying to a message', function () {
 });
 
 describe('when sending /ban replying to a user message', function () {
-    it('bans the user', function () {
+    it('bans the user if user is admin', function () {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $botUser = User::make(
-            id: 99999,
-            is_bot: true,
-            first_name: 'Bot',
-            username: 'botman',
-        );
+        $botUser = makeBotUser();
 
         $usernameToBan = 'spammer';
         $userToBan = User::make(
@@ -65,7 +60,8 @@ describe('when sending /ban replying to a user message', function () {
         );
         $chat = Chat::make(id: 1, type: ChatType::GROUP);
 
-        $bot->setCommonChat($chat)
+        $bot->setCommonUser($botUser)
+            ->setCommonChat($chat)
             ->hearMessage([
                 'text' => CommandEnum::Ban->command(),
                 'reply_to_message' => [
@@ -74,27 +70,57 @@ describe('when sending /ban replying to a user message', function () {
                     'text' => 'Spam message',
                 ],
             ])
-            ->willReceive(
-                result: $botUser->toArray()
-            ) // mock getMe
-            ->willReceive(
-                result: [
-                    [
-                        'status' => 'administrator',
-                        'user' => $botUser->toArray(),
-                        'can_be_edited' => true,
-                        'is_anonymous' => false,
-                        'can_manage_chat' => true,
-                        'can_delete_messages' => true,
-                        'can_manage_video_chats' => true,
-                        'can_restrict_members' => true,
-                        'can_promote_members' => true,
-                        'can_change_info' => true,
-                        'can_invite_users' => true,
-                    ],
-                ]) // mock getChatAdministrators
+            ->willReceive(result: [
+                [
+                    'status' => 'administrator',
+                    'user' => $botUser->toArray(),
+                    'can_be_edited' => true,
+                    'is_anonymous' => false,
+                    'can_manage_chat' => true,
+                    'can_delete_messages' => true,
+                    'can_manage_video_chats' => true,
+                    'can_restrict_members' => true,
+                    'can_promote_members' => true,
+                    'can_change_info' => true,
+                    'can_invite_users' => true,
+                ],
+            ]) // mock getChatAdministrators (middleware - user must be admin)
+            ->willReceivePartial(result: [
+                'status' => 'member',
+                'user' => $userToBan->toArray(),
+            ]) // mock getChatMember (target user is a normal member, not admin)
             ->reply()
             ->assertCalled('banChatMember')
-            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 4);
+            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 3);
+    });
+
+    it('will not ban users if user is member', function () {
+        /** @var FakeNutgram $bot */
+        $bot = resolve(Nutgram::class);
+
+        $memberUser = makeUser();
+
+        $userToBan = User::make(
+            id: 2,
+            is_bot: false,
+            first_name: 'Spammer',
+            username: 'spammer',
+        );
+        $chat = Chat::make(id: 1, type: ChatType::GROUP);
+
+        $bot->setCommonUser($memberUser)
+            ->setCommonChat($chat)
+            ->hearMessage([
+                'text' => CommandEnum::Ban->command(),
+                'reply_to_message' => [
+                    'from' => $userToBan->toArray(),
+                    'chat' => $chat->toArray(),
+                    'text' => 'Spam message',
+                ],
+            ])
+            ->willReceive(result: []) // mock getChatAdministrators (middleware - returns empty, user is not admin)
+            ->reply()
+            ->assertCalled('banChatMember', times: 0)
+            ->assertCalled('sendMessage', times: 0);
     });
 });

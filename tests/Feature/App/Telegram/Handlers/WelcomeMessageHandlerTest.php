@@ -15,12 +15,27 @@ use SergiX44\Nutgram\Testing\FakeNutgram;
  */
 function setupBotWithNewMembers(FakeNutgram $bot, Chat $chat, User $botUser, array $newMembers): FakeNutgram
 {
-    return $bot->setCommonChat($chat)
+    // Use the first new member as the message sender (the one who triggers new_chat_members event)
+    $messageSender = $newMembers[0] ?? $botUser;
+
+    $setup = $bot->setCommonUser($messageSender)
+        ->setCommonChat($chat)
         ->hearMessage([
             'new_chat_members' => array_map(fn (User $user) => $user->toArray(), $newMembers),
         ])
-        ->willReceive(result: $botUser->toArray())
-        ->willReceive(result: mockAdminResponse($botUser));
+        ->willReceive(result: mockAdminResponse($messageSender)); // mock getChatAdministrators (middleware) - sender must be admin
+
+    // Add willReceive for each sendMessage call (one per new member)
+    foreach ($newMembers as $member) {
+        $setup->willReceive(result: [
+            'message_id' => $member->id,
+            'chat' => $chat->toArray(),
+            'date' => time(),
+            'text' => 'Welcome message',
+        ]);
+    }
+
+    return $setup;
 }
 
 describe('when a new user enters the group', function () {
@@ -47,7 +62,7 @@ describe('when a new user enters the group', function () {
 
         setupBotWithNewMembers($bot, $chat, $botUser, [$newUser])
             ->reply()
-            ->assertReplyText($expectedText, index: 2);
+            ->assertReplyText($expectedText, index: 1);
     });
 
     test('welcome message contains buttons', function () {
@@ -91,35 +106,35 @@ describe('when a new user enters the group', function () {
                 }
 
                 return $hasDocumentationButton && $hasFreeCourseButton;
-            }, index: 2);
+            }, index: 1);
+    });
+});
+
+describe('when no one enters the group', function () {
+    it('sends welcome message to multiple users joining at the same time', function () {
+        /** @var FakeNutgram $bot */
+        $bot = resolve(Nutgram::class);
+        $botUser = makeBotUser();
+        $newUser1 = makeUser(1, 'Mario', 'mario_rossi');
+        $newUser2 = makeUser(2, 'Luigi', 'luigi_verdi');
+        $chat = makeChat();
+
+        setupBotWithNewMembers($bot, $chat, $botUser, [$newUser1, $newUser2])
+            ->reply()
+            ->assertCalled('sendMessage', times: 2);
     });
 
-    describe('when no one enters the group', function () {
-        it('sends welcome message to multiple users joining at the same time', function () {
-            /** @var FakeNutgram $bot */
-            $bot = resolve(Nutgram::class);
-            $botUser = makeBotUser();
-            $newUser1 = makeUser(1, 'Mario', 'mario_rossi');
-            $newUser2 = makeUser(2, 'Luigi', 'luigi_verdi');
-            $chat = makeChat();
+    it('does not send message when no new members', function () {
+        /** @var FakeNutgram $bot */
+        $bot = resolve(Nutgram::class);
+        $botUser = makeBotUser();
+        $chat = makeChat();
 
-            setupBotWithNewMembers($bot, $chat, $botUser, [$newUser1, $newUser2])
-                ->reply()
-                ->assertCalled('sendMessage', times: 2);
-        });
-
-        it('does not send message when no new members', function () {
-            /** @var FakeNutgram $bot */
-            $bot = resolve(Nutgram::class);
-            $botUser = makeBotUser();
-            $chat = makeChat();
-
-            $bot->setCommonChat($chat)
-                ->hearMessage(['text' => 'Hello!'])
-                ->willReceive(result: $botUser->toArray())
-                ->willReceive(result: mockAdminResponse($botUser))
-                ->reply()
-                ->assertNoReply();
-        });
+        $bot->setCommonChat($chat)
+            ->hearMessage(['text' => 'Hello!'])
+            ->willReceive(result: $botUser->toArray())
+            ->willReceive(result: mockAdminResponse($botUser))
+            ->reply()
+            ->assertNoReply();
     });
 });
