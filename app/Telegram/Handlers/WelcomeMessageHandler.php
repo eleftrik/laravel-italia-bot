@@ -12,10 +12,6 @@ use SergiX44\Nutgram\Telegram\Types\User\User;
 
 final class WelcomeMessageHandler
 {
-    private const DOCUMENTATION_URL = 'https://laravel.com/docs/';
-
-    private const FREE_COURSES_URL = 'https://laravelfromscratch.com';
-
     public function __invoke(Nutgram $bot): void
     {
         $newChatMembers = $this->getNewChatMembers($bot);
@@ -67,13 +63,13 @@ final class WelcomeMessageHandler
             ->addRow(
                 InlineKeyboardButton::make(
                     text: __('telegram.buttons.documentation'),
-                    url: self::DOCUMENTATION_URL,
+                    url: config()->string('bot.buttons.documentation_url'),
                 )
             )
             ->addRow(
                 InlineKeyboardButton::make(
                     text: __('telegram.buttons.free_courses'),
-                    url: self::FREE_COURSES_URL,
+                    url: config()->string('bot.buttons.free_laravel_course'),
                 )
             );
     }
