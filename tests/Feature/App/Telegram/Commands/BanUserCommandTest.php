@@ -9,8 +9,8 @@ use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
-describe('when sending /ban without replying to a message', function () {
-    it('does not send any reply', function () {
+describe('when sending /ban without replying to a message', function (): void {
+    it('does not send any reply', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
@@ -44,8 +44,8 @@ describe('when sending /ban without replying to a message', function () {
     });
 });
 
-describe('when sending /ban replying to a user message', function () {
-    it('bans the user if user is admin', function () {
+describe('when sending /ban replying to a user message', function (): void {
+    it('bans the user if user is admin', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
@@ -94,7 +94,7 @@ describe('when sending /ban replying to a user message', function () {
             ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 3);
     });
 
-    it('will not ban users if user is member', function () {
+    it('will not ban users if user is member', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 

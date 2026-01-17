@@ -8,8 +8,8 @@ use SergiX44\Nutgram\Telegram\Properties\ChatType;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Testing\FakeNutgram;
 
-describe('when sending /start', function () {
-    it('replies with a message', function () {
+describe('when sending /start', function (): void {
+    it('replies with a message', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 

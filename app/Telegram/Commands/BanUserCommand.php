@@ -22,7 +22,7 @@ final class BanUserCommand extends Command
 
         $reply = $bot->message()?->reply_to_message;
 
-        if ($reply === null) {
+        if (! $reply instanceof \SergiX44\Nutgram\Telegram\Types\Message\Message) {
             return;
         }
 

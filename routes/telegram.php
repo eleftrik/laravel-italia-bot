@@ -19,14 +19,14 @@ use SergiX44\Nutgram\Nutgram;
 |
 */
 
-$bot->group(function (Nutgram $bot) {
+$bot->group(function (Nutgram $bot): void {
     $bot->registerCommand(BanUserCommand::class);
 
     $bot->onNewChatMembers(WelcomeMessageHandler::class);
 
     when(! app()->isProduction(), $bot->registerCommand(ChatIdCommand::class));
 
-    when(! app()->isProduction(), $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot) {
+    when(! app()->isProduction(), $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot): void {
         $bot->sendMessage('Hello, world!');
     })->description('The start command!'));
 })->middleware(IsAdminMiddleware::class);
