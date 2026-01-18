@@ -7,6 +7,7 @@ use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
+use Tests\Fixtures\Helpers\BotHelper;
 
 /**
  * @param  array<User>  $newMembers
@@ -23,7 +24,7 @@ function setupBotWithNewMembers(FakeNutgram $bot, Chat $chat, User $botUser, arr
         ->hearMessage([
             'new_chat_members' => array_map(fn (User $user): array => $user->toArray(), $newMembers),
         ])
-        ->willReceive(result: mockAdminResponse($messageSender)); // mock getChatAdministrators (middleware) - sender must be admin
+        ->willReceive(result: BotHelper::mockAdminResponse($messageSender)); // mock getChatAdministrators (middleware) - sender must be admin
 
     // Add willReceive for each sendMessage call (one per new member)
     foreach ($newMembers as $member) {
@@ -42,9 +43,9 @@ describe('when a new user enters the group', function (): void {
     it('sends welcome message to users', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
-        $botUser = makeBotUser();
-        $newUser = makeUser();
-        $chat = makeChat();
+        $botUser = BotHelper::makeBotUser();
+        $newUser = BotHelper::makeUser();
+        $chat = BotHelper::makeChat();
 
         setupBotWithNewMembers($bot, $chat, $botUser, [$newUser])
             ->reply()
@@ -54,9 +55,9 @@ describe('when a new user enters the group', function (): void {
     test('welcome message contains correct text', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
-        $botUser = makeBotUser();
-        $newUser = makeUser(42, 'Mario', 'mario_rossi');
-        $chat = makeChat();
+        $botUser = BotHelper::makeBotUser();
+        $newUser = BotHelper::makeUser(42, 'Mario', 'mario_rossi');
+        $chat = BotHelper::makeChat();
 
         $expectedText = 'Ciao [Mario](tg://user?id=42), benvenuto/a nel gruppo *Laravel Italia*';
 
@@ -68,9 +69,9 @@ describe('when a new user enters the group', function (): void {
     test('welcome message contains buttons', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
-        $botUser = makeBotUser();
-        $newUser = makeUser();
-        $chat = makeChat();
+        $botUser = BotHelper::makeBotUser();
+        $newUser = BotHelper::makeUser();
+        $chat = BotHelper::makeChat();
 
         setupBotWithNewMembers($bot, $chat, $botUser, [$newUser])
             ->reply()
@@ -115,10 +116,10 @@ describe('when no one enters the group', function (): void {
     it('sends welcome message to multiple users joining at the same time', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
-        $botUser = makeBotUser();
-        $newUser1 = makeUser(1, 'Mario', 'mario_rossi');
-        $newUser2 = makeUser(2, 'Luigi', 'luigi_verdi');
-        $chat = makeChat();
+        $botUser = BotHelper::makeBotUser();
+        $newUser1 = BotHelper::makeUser(1, 'Mario', 'mario_rossi');
+        $newUser2 = BotHelper::makeUser(2, 'Luigi', 'luigi_verdi');
+        $chat = BotHelper::makeChat();
 
         setupBotWithNewMembers($bot, $chat, $botUser, [$newUser1, $newUser2])
             ->reply()
@@ -128,13 +129,13 @@ describe('when no one enters the group', function (): void {
     it('does not send message when no new members', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
-        $botUser = makeBotUser();
-        $chat = makeChat();
+        $botUser = BotHelper::makeBotUser();
+        $chat = BotHelper::makeChat();
 
         $bot->setCommonChat($chat)
             ->hearMessage(['text' => 'Hello!'])
             ->willReceive(result: $botUser->toArray())
-            ->willReceive(result: mockAdminResponse($botUser))
+            ->willReceive(result: BotHelper::mockAdminResponse($botUser))
             ->reply()
             ->assertNoReply();
     });

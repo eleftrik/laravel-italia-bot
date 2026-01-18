@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 use App\Telegram\Enums\CommandEnum;
 use SergiX44\Nutgram\Nutgram;
-use SergiX44\Nutgram\Telegram\Properties\ChatType;
-use SergiX44\Nutgram\Telegram\Types\Chat\Chat;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 use SergiX44\Nutgram\Testing\FakeNutgram;
+use Tests\Fixtures\Helpers\BotHelper;
 
 describe('when sending /ban without replying to a message', function (): void {
     it('does not send any reply', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $user = makeUser();
+        $user = BotHelper::makeUser();
 
         $chatId = 123;
         $bot->setCommonUser($user)
-            ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
+            ->setCommonChat(BotHelper::makeChat(id: $chatId))
             ->hearText(CommandEnum::Ban->command())
-            ->willReceive(result: mockAdminResponse($user))
+            ->willReceive(result: BotHelper::mockAdminResponse($user))
             ->assertNoReply();
     });
 });
@@ -30,12 +29,12 @@ describe('when sending /ban replying to a user message', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $botUser = makeBotUser();
+        $botUser = BotHelper::makeBotUser();
 
         $usernameToBan = 'spammer';
-        $userToBan = makeUser(username: $usernameToBan);
+        $userToBan = BotHelper::makeUser(username: $usernameToBan);
 
-        $chat = makeChat();
+        $chat = BotHelper::makeChat();
 
         $bot->setCommonUser($botUser)
             ->setCommonChat($chat)
@@ -47,7 +46,7 @@ describe('when sending /ban replying to a user message', function (): void {
                     'text' => 'Spam message',
                 ],
             ])
-            ->willReceive(result: mockAdminResponse($botUser)) // mock getChatAdministrators (middleware - user must be admin)
+            ->willReceive(result: BotHelper::mockAdminResponse($botUser)) // mock getChatAdministrators (middleware - user must be admin)
             ->willReceivePartial(result: [
                 'status' => 'member',
                 'user' => $userToBan->toArray(),
@@ -61,14 +60,14 @@ describe('when sending /ban replying to a user message', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $memberUser = makeUser();
+        $memberUser = BotHelper::makeUser();
 
-        $userToBan = makeUser(
+        $userToBan = BotHelper::makeUser(
             id: 2,
             firstName: 'Spammer',
             username: 'spammer',
         );
-        $chat = makeChat();
+        $chat = BotHelper::makeChat();
 
         $bot->setCommonUser($memberUser)
             ->setCommonChat($chat)
