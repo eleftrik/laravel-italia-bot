@@ -14,32 +14,13 @@ describe('when sending /ban without replying to a message', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
 
-        $user = User::make(
-            id: 1,
-            is_bot: false,
-            first_name: 'Test',
-            username: 'test',
-        );
+        $user = makeUser();
 
         $chatId = 123;
         $bot->setCommonUser($user)
             ->setCommonChat(Chat::make(id: $chatId, type: ChatType::GROUP))
             ->hearText(CommandEnum::Ban->command())
-            ->willReceive(result: [
-                [
-                    'status' => 'administrator',
-                    'user' => $user->toArray(),
-                    'can_be_edited' => true,
-                    'is_anonymous' => false,
-                    'can_manage_chat' => true,
-                    'can_delete_messages' => true,
-                    'can_manage_video_chats' => true,
-                    'can_restrict_members' => true,
-                    'can_promote_members' => true,
-                    'can_change_info' => true,
-                    'can_invite_users' => true,
-                ],
-            ])
+            ->willReceive(result: mockAdminResponse($user))
             ->assertNoReply();
     });
 });
@@ -52,13 +33,9 @@ describe('when sending /ban replying to a user message', function (): void {
         $botUser = makeBotUser();
 
         $usernameToBan = 'spammer';
-        $userToBan = User::make(
-            id: 2,
-            is_bot: false,
-            first_name: 'Spammer',
-            username: $usernameToBan,
-        );
-        $chat = Chat::make(id: 1, type: ChatType::GROUP);
+        $userToBan = makeUser(username: $usernameToBan);
+
+        $chat = makeChat();
 
         $bot->setCommonUser($botUser)
             ->setCommonChat($chat)
@@ -70,21 +47,7 @@ describe('when sending /ban replying to a user message', function (): void {
                     'text' => 'Spam message',
                 ],
             ])
-            ->willReceive(result: [
-                [
-                    'status' => 'administrator',
-                    'user' => $botUser->toArray(),
-                    'can_be_edited' => true,
-                    'is_anonymous' => false,
-                    'can_manage_chat' => true,
-                    'can_delete_messages' => true,
-                    'can_manage_video_chats' => true,
-                    'can_restrict_members' => true,
-                    'can_promote_members' => true,
-                    'can_change_info' => true,
-                    'can_invite_users' => true,
-                ],
-            ]) // mock getChatAdministrators (middleware - user must be admin)
+            ->willReceive(result: mockAdminResponse($botUser)) // mock getChatAdministrators (middleware - user must be admin)
             ->willReceivePartial(result: [
                 'status' => 'member',
                 'user' => $userToBan->toArray(),
@@ -100,13 +63,12 @@ describe('when sending /ban replying to a user message', function (): void {
 
         $memberUser = makeUser();
 
-        $userToBan = User::make(
+        $userToBan = makeUser(
             id: 2,
-            is_bot: false,
-            first_name: 'Spammer',
+            firstName: 'Spammer',
             username: 'spammer',
         );
-        $chat = Chat::make(id: 1, type: ChatType::GROUP);
+        $chat = makeChat();
 
         $bot->setCommonUser($memberUser)
             ->setCommonChat($chat)
