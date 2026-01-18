@@ -110,9 +110,7 @@ describe('when a new user enters the group', function (): void {
                 return $hasDocumentationButton && $hasFreeCourseButton;
             }, index: 1);
     });
-});
 
-describe('when no one enters the group', function (): void {
     it('sends welcome message to multiple users joining at the same time', function (): void {
         /** @var FakeNutgram $bot */
         $bot = resolve(Nutgram::class);
@@ -125,6 +123,9 @@ describe('when no one enters the group', function (): void {
             ->reply()
             ->assertCalled('sendMessage', times: 2);
     });
+});
+
+describe('when no one enters the group', function (): void {
 
     it('does not send message when no new members', function (): void {
         /** @var FakeNutgram $bot */

@@ -15,9 +15,8 @@ describe('when sending /ban without replying to a message', function (): void {
 
         $user = BotHelper::makeUser();
 
-        $chatId = 123;
         $bot->setCommonUser($user)
-            ->setCommonChat(BotHelper::makeChat(id: $chatId))
+            ->setCommonChat(BotHelper::makeChat())
             ->hearText(CommandEnum::Ban->command())
             ->willReceive(result: BotHelper::mockAdminResponse($user))
             ->assertNoReply();
