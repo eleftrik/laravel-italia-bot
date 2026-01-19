@@ -30,8 +30,9 @@ describe('when sending /ban replying to a user message', function (): void {
 
         $botUser = BotHelper::makeBotUser();
 
-        $usernameToBan = 'spammer';
-        $userToBan = BotHelper::makeUser(username: $usernameToBan);
+        $userFirstNameToBan = 'Mario';
+        $userIdToBan = 42;
+        $userToBan = BotHelper::makeUser(id: $userIdToBan, firstName: $userFirstNameToBan);
 
         $chat = BotHelper::makeChat();
 
@@ -52,7 +53,7 @@ describe('when sending /ban replying to a user message', function (): void {
             ]) // mock getChatMember (target user is a normal member, not admin)
             ->reply()
             ->assertCalled('banChatMember')
-            ->assertReplyText("🔨L'utente @$usernameToBan ci ha lasciato. Rimarrà sempre nei nostri cuori. 🪽", 3);
+            ->assertReplyText("🔨L'utente [$userFirstNameToBan](tg://user?id=$userIdToBan) ci ha lasciato\. Rimarrà sempre nei nostri cuori\. 🪽", 3);
     });
 
     it('will not ban users if user is member', function (): void {

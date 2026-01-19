@@ -23,8 +23,7 @@ function setupBotWithNewMembers(FakeNutgram $bot, Chat $chat, User $botUser, arr
         ->setCommonChat($chat)
         ->hearMessage([
             'new_chat_members' => array_map(fn (User $user): array => $user->toArray(), $newMembers),
-        ])
-        ->willReceive(result: BotHelper::mockAdminResponse($messageSender)); // mock getChatAdministrators (middleware) - sender must be admin
+        ]);
 
     // Add willReceive for each sendMessage call (one per new member)
     foreach ($newMembers as $member) {
@@ -63,7 +62,7 @@ describe('when a new user enters the group', function (): void {
 
         setupBotWithNewMembers($bot, $chat, $botUser, [$newUser])
             ->reply()
-            ->assertReplyText($expectedText, index: 1);
+            ->assertReplyText($expectedText);
     });
 
     test('welcome message contains buttons', function (): void {
@@ -108,7 +107,7 @@ describe('when a new user enters the group', function (): void {
                 }
 
                 return $hasDocumentationButton && $hasFreeCourseButton;
-            }, index: 1);
+            });
     });
 
     it('sends welcome message to multiple users joining at the same time', function (): void {
@@ -135,8 +134,6 @@ describe('when no one enters the group', function (): void {
 
         $bot->setCommonChat($chat)
             ->hearMessage(['text' => 'Hello!'])
-            ->willReceive(result: $botUser->toArray())
-            ->willReceive(result: BotHelper::mockAdminResponse($botUser))
             ->reply()
             ->assertNoReply();
     });

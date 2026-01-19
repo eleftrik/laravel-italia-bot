@@ -7,6 +7,7 @@ namespace App\Telegram\Commands;
 use App\Telegram\Enums\CommandEnum;
 use SergiX44\Nutgram\Handlers\Type\Command;
 use SergiX44\Nutgram\Nutgram;
+use SergiX44\Nutgram\Telegram\Properties\ParseMode;
 use SergiX44\Nutgram\Telegram\Types\Chat\ChatMember;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 
@@ -52,8 +53,10 @@ final class BanUserCommand extends Command
             revoke_messages: true
         );
 
+        $userMention = buildUserMention($targetUser);
         $bot->sendMessage(
-            text: __('telegram.messages.user_has_been_banned', ['username' => $targetUser->username])
+            text: __('telegram.messages.user_has_been_banned', ['user' => $userMention]),
+            parse_mode: ParseMode::MARKDOWN,
         );
     }
 }

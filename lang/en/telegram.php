@@ -8,7 +8,7 @@ return [
     ],
     'messages' => [
         'chat_id' => 'Chat ID is :chat_id',
-        'user_has_been_banned' => '🔨User @:username has left us. They will always remain in our hearts. 🪽',
+        'user_has_been_banned' => '🔨User :user has left us. They will always remain in our hearts. 🪽',
         'welcome' => 'Hello :user, welcome to *:group*',
     ],
     'buttons' => [

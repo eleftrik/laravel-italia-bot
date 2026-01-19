@@ -44,17 +44,12 @@ final class WelcomeMessageHandler
 
     private function buildWelcomeText(User $user): string
     {
-        $userMention = $this->buildUserMention($user);
+        $userMention = buildUserMention($user);
 
         return __('telegram.messages.welcome', [
             'user' => $userMention,
             'group' => 'Laravel Italia',
         ]);
-    }
-
-    private function buildUserMention(User $user): string
-    {
-        return "[{$user->first_name}](tg://user?id={$user->id})";
     }
 
     private function buildKeyboard(): InlineKeyboardMarkup
