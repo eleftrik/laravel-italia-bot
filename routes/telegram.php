@@ -5,7 +5,8 @@
 use App\Telegram\Commands\BanUserCommand;
 use App\Telegram\Commands\ChatIdCommand;
 use App\Telegram\Enums\CommandEnum;
-use App\Telegram\Handlers\WelcomeMessageHandler;
+use App\Telegram\Handlers\CaptchaCallbackHandler;
+use App\Telegram\Handlers\CaptchaHandler;
 use App\Telegram\Middleware\IsAdminMiddleware;
 use SergiX44\Nutgram\Nutgram;
 
@@ -19,8 +20,15 @@ use SergiX44\Nutgram\Nutgram;
 |
 */
 
+// Captcha handler for new members - no admin middleware required
+$bot->onNewChatMembers(CaptchaHandler::class);
+$bot->onCallbackQueryData('captcha:{type}:{userId}:{isCorrect}', CaptchaCallbackHandler::class);
+
+// Admin-only commands
 $bot->group(function (Nutgram $bot): void {
     $bot->registerCommand(BanUserCommand::class);
+
+    // $bot->onNewChatMembers(WelcomeMessageHandler::class);
 
     when(! app()->isProduction(), $bot->registerCommand(ChatIdCommand::class));
 
@@ -29,4 +37,4 @@ $bot->group(function (Nutgram $bot): void {
     })->description('The start command!'));
 })->middleware(IsAdminMiddleware::class);
 
-$bot->onNewChatMembers(WelcomeMessageHandler::class);
+// $bot->onNewChatMembers(WelcomeMessageHandler::class);
