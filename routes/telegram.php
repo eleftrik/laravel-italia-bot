@@ -31,7 +31,14 @@ $bot->group(function (Nutgram $bot): void {
 
     // $bot->onNewChatMembers(WelcomeMessageHandler::class);
 
-    when(! app()->isProduction(), $bot->registerCommand(ChatIdCommand::class));
+    $bot->registerCommand(ChatIdCommand::class)
+        ->unless(! app()->isProduction());
+
+    $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot): void {
+        $bot->sendMessage('Hello, world!');
+    })
+        ->description('The start command!')
+        ->unless(! app()->isProduction());
 
     when(! app()->isProduction(), $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot): void {
         $bot->sendMessage('Hello, world!');
