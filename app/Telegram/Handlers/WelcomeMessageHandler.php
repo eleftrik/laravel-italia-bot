@@ -10,7 +10,7 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 
-final class WelcomeMessageHandler
+final readonly class WelcomeMessageHandler
 {
     public function __invoke(Nutgram $bot): void
     {

@@ -14,7 +14,7 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 use SergiX44\Nutgram\Telegram\Types\User\User;
 
-final class CaptchaHandler
+final readonly class CaptchaHandler
 {
     private const EMOJIS = [
         'dog' => '🐕',
