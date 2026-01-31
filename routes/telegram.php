@@ -40,9 +40,11 @@ $bot->group(function (Nutgram $bot): void {
         ->description('The start command!')
         ->unless(! app()->isProduction());
 
-    when(! app()->isProduction(), $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot): void {
+    $bot->onCommand(CommandEnum::Start->value, function (Nutgram $bot): void {
         $bot->sendMessage('Hello, world!');
-    })->description('The start command!'));
+    })
+        ->description('The start command!')
+        ->unless(! app()->isProduction());
 })->middleware(IsAdminMiddleware::class);
 
 // $bot->onNewChatMembers(WelcomeMessageHandler::class);
